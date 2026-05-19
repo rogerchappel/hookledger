@@ -1,0 +1,9 @@
+{
+  "simple-git-hooks": {
+    "pre-commit": "npm run check",
+    "pre-push": "npm test"
+  },
+  "scripts": {
+    "prepare": "simple-git-hooks"
+  }
+}
