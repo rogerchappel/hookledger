@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "precommit": "npm run lint",
+    "prepush": "npm test",
+    "prepare": "husky"
+  }
+}
