@@ -1,0 +1,11 @@
+repos:
+  - repo: local
+    hooks:
+      - id: unit-tests
+        name: unit tests
+        entry: npm test
+        language: system
+      - id: lint
+        name: lint
+        entry: npm run check
+        language: system
