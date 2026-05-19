@@ -1,0 +1,26 @@
+{
+  "project": "hookledger",
+  "repo": "rogerchappel/hookledger",
+  "defaultBranch": "main",
+  "packageManager": "npm",
+  "runtime": "node>=20",
+  "prd": "docs/PRD.md",
+  "tasks": "docs/TASKS.md",
+  "verification": [
+    "npm run build",
+    "npm run check",
+    "npm test",
+    "npm run smoke",
+    "bash scripts/validate.sh"
+  ],
+  "safety": {
+    "readOnlyHooks": true,
+    "executesHookBodies": false,
+    "telemetry": false,
+    "secretsRequired": false
+  },
+  "outputs": [
+    "docs/hookledger/hookledger.json",
+    "docs/hookledger/HOOKLEDGER.md"
+  ]
+}
