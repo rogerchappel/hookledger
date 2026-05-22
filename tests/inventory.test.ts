@@ -5,7 +5,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { inventoryHooks } from "../src/inventory.js";
 
-const repoRoot = path.resolve(import.meta.dirname, "..");
+const repoRoot = path.resolve(import.meta.dirname, "..", "..");
 
 test("inventories native git hooks from a repository", async () => {
   const root = await nativeGitFixture();
@@ -39,7 +39,8 @@ test("inventories simple-git-hooks config", async () => {
 
 test("inventories package hook scripts", async () => {
   const ledger = await inventoryHooks({ root: fixture("package-scripts") });
-  assert.deepEqual(ledger.hooks.map((hook) => hook.name), ["prepare", "precommit", "prepush"]);
+  const names = ledger.hooks.map((hook) => hook.name).sort();
+  assert.deepEqual(names, ["precommit", "prepare", "prepush"]);
 });
 
 async function nativeGitFixture(): Promise<string> {

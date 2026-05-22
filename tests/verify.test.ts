@@ -7,7 +7,7 @@ import { inventoryHooks } from "../src/inventory.js";
 import { renderJsonLedger } from "../src/render-json.js";
 import { verifyLedger } from "../src/verify.js";
 
-const repoRoot = path.resolve(import.meta.dirname, "..");
+const repoRoot = path.resolve(import.meta.dirname, "..", "..");
 
 test("passes when hook ledger matches current hooks", async () => {
   const root = await nativeGitFixture();

@@ -35,7 +35,7 @@ export function stringFlag(flags: Map<string, string | boolean>, name: string, f
   if (value === undefined || value === true) {
     return fallback;
   }
-  return value;
+  return value as string;
 }
 
 export function optionalStringFlag(flags: Map<string, string | boolean>, name: string): string | null {
@@ -43,7 +43,7 @@ export function optionalStringFlag(flags: Map<string, string | boolean>, name: s
   if (value === undefined || value === true) {
     return null;
   }
-  return value;
+  return value as string;
 }
 
 export function hasFlag(flags: Map<string, string | boolean>, name: string): boolean {
