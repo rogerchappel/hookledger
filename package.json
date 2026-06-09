@@ -4,7 +4,7 @@
   "description": "Read-only git hook inventory and verification ledger.",
   "type": "module",
   "bin": {
-    "hookledger": "./dist/index.js"
+    "hookledger": "dist/index.js"
   },
   "main": "./dist/index.js",
   "exports": {
@@ -40,5 +40,13 @@
     "@types/node": "^22.10.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerchappel/hookledger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rogerchappel/hookledger/issues"
+  },
+  "homepage": "https://github.com/rogerchappel/hookledger#readme"
 }
