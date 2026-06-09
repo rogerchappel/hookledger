@@ -4,7 +4,7 @@
   "description": "Read-only git hook inventory and verification ledger.",
   "type": "module",
   "bin": {
-    "hookledger": "dist/index.js"
+    "hookledger": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "exports": {
@@ -14,7 +14,8 @@
     "dist",
     "README.md",
     "LICENSE",
-    "SECURITY.md"
+    "SECURITY.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsc",
