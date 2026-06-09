@@ -12,7 +12,9 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "SECURITY.md"
   ],
   "scripts": {
     "build": "tsc",
