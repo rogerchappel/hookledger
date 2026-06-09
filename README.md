@@ -99,7 +99,20 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 See [SECURITY.md](SECURITY.md). HookLedger does not require secrets and does not
 include telemetry.
+## Release readiness
+
+Run the same checks expected before opening or cutting a release:
+
+```sh
+npm run check
+npm run test
+npm run build
+npm run smoke
+npm run package:smoke
+npm run release:check
+```
+
+Use `npm pack --dry-run` to confirm the published package contains the CLI/runtime files plus README, license, security, support, and release notes.
 
 ## License
-
 MIT
