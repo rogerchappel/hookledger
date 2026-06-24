@@ -4,14 +4,15 @@
   "description": "Read-only git hook inventory and verification ledger.",
   "type": "module",
   "bin": {
-    "hookledger": "./dist/index.js"
+    "hookledger": "./dist/src/index.js"
   },
-  "main": "./dist/index.js",
+  "main": "./dist/src/index.js",
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/src/index.js"
   },
   "files": [
-    "dist",
+    "dist/src",
+    "fixtures",
     "README.md",
     "LICENSE",
     "SECURITY.md",
@@ -24,7 +25,7 @@
     "dev": "tsx src/index.ts",
     "smoke": "bash examples/smoke-native.sh",
     "test": "node --test dist/tests/*.test.js",
-    "package:smoke": "npm pack --dry-run",
+    "package:smoke": "npm run build && test -f dist/src/index.js && node dist/src/index.js --help >/dev/null && npm pack --dry-run",
     "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke"
   },
   "keywords": [
