@@ -25,7 +25,7 @@ npm run build
 During development, run the CLI through the built entry point:
 
 ```sh
-node dist/index.js inventory --root .
+node dist/src/index.js inventory --root .
 ```
 
 ## Use
@@ -112,7 +112,9 @@ npm run package:smoke
 npm run release:check
 ```
 
-Use `npm pack --dry-run` to confirm the published package contains the CLI/runtime files plus README, license, security, support, and release notes.
+Use `npm run package:smoke` to confirm the published package contains the runnable
+CLI/runtime files, checked-in fixtures, README, license, security, support, and
+release notes.
 
 ## License
 MIT
