@@ -75,6 +75,16 @@ Run the real CLI smoke against a temporary native-hook fixture:
 npm run build
 npm run smoke
 ```
+## CLI Help Smoke
+
+Confirm the packaged command starts and prints its help text before relying on a release tarball or downstream automation:
+
+```bash
+npm run build
+node ./dist/src/index.js --help
+```
+
+The command should exit successfully, print the available options, and avoid reading project files or contacting external services.
 
 ## Verify
 
