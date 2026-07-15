@@ -126,5 +126,9 @@ Use `npm run package:smoke` to confirm the published package contains the runnab
 CLI/runtime files, checked-in fixtures, README, license, security, support, and
 release notes.
 
+## Safety Notes
+
+This package is intended for local, reviewable developer and agent workflows. Review generated reports, plans, or artifacts before sharing them publicly or using them to drive external actions. Do not place secrets, private logs, customer data, or credentials in fixtures, issues, or examples.
+
 ## License
 MIT
