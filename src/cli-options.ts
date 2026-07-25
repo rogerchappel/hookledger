@@ -3,8 +3,31 @@ export interface ParsedArgs {
   flags: Map<string, string | boolean>;
 }
 
+type FlagKind = "string" | "boolean";
+
+const COMMAND_FLAGS: Record<string, Readonly<Record<string, FlagKind>>> = {
+  inventory: {
+    root: "string",
+    json: "string",
+    markdown: "string",
+    "ledger-dir": "string",
+    stdout: "boolean"
+  },
+  verify: {
+    baseline: "string",
+    root: "string"
+  },
+  help: {},
+  "--help": {},
+  "-h": {}
+};
+
 export function parseArgs(argv: string[]): ParsedArgs {
   const [command = "help", ...rest] = argv;
+  const allowedFlags = COMMAND_FLAGS[command];
+  if (!allowedFlags) {
+    throw new Error(`Unknown command: ${command}`);
+  }
   const flags = new Map<string, string | boolean>();
   for (let index = 0; index < rest.length; index += 1) {
     const token = rest[index];
@@ -15,17 +38,27 @@ export function parseArgs(argv: string[]): ParsedArgs {
     if (!rawName) {
       throw new Error(`Invalid flag: ${token}`);
     }
-    if (inlineValue !== undefined) {
-      flags.set(rawName, inlineValue);
+    const kind = allowedFlags[rawName];
+    if (!kind) {
+      throw new Error(`Unknown option for ${command}: --${rawName}`);
+    }
+    if (kind === "boolean") {
+      if (inlineValue !== undefined) {
+        throw new Error(`--${rawName} does not accept a value`);
+      }
+      const next = rest[index + 1];
+      if (next && !next.startsWith("--")) {
+        throw new Error(`--${rawName} does not accept a value: ${next}`);
+      }
+      flags.set(rawName, true);
       continue;
     }
-    const next = rest[index + 1];
-    if (next && !next.startsWith("--")) {
-      flags.set(rawName, next);
-      index += 1;
-    } else {
-      flags.set(rawName, true);
+    const value = inlineValue ?? rest[index + 1];
+    if (value === undefined || value === "" || value.startsWith("--")) {
+      throw new Error(`--${rawName} requires a value`);
     }
+    flags.set(rawName, value);
+    if (inlineValue === undefined) index += 1;
   }
   return { command, flags };
 }
