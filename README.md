@@ -57,6 +57,11 @@ Print inventory JSON to stdout:
 hookledger inventory --root . --stdout
 ```
 
+`inventory` accepts `--root`, `--json`, `--markdown`, and `--ledger-dir` with
+values, plus the valueless `--stdout` switch. `verify` accepts `--baseline`
+(required) and `--root`, both with values. Other options, missing values, and
+values supplied to `--stdout` are rejected.
+
 ## Risk Hints
 
 HookLedger reports informational, warning, and high-risk hints for patterns such
