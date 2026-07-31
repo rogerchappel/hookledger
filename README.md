@@ -8,7 +8,8 @@ installing, modifying, or executing hook bodies.
 
 ## Detects
 
-- Native `.git/hooks` files, excluding `*.sample`.
+- Native `.git/hooks` files, including hooks in the shared Git directory used by
+  linked worktrees, and excluding `*.sample`.
 - Husky hook files in `.husky/`.
 - Lefthook `lefthook.yml` and `lefthook.yaml`.
 - pre-commit `.pre-commit-config.yaml`.
