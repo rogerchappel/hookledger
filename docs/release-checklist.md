@@ -6,7 +6,7 @@ Use this checklist before publishing hookledger.
 
 - Run `npm install` from a clean checkout.
 - Run `npm run release:check` when available.
-- Run `npm pack --dry-run` and inspect the file list.
+- Run `npm run package:smoke` to assert the packed file list and execute the installed artifact.
 - Run the documented CLI smoke command from the README.
 
 ## Package Contents

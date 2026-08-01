@@ -9,7 +9,7 @@
 ### Verification
 
 - `npm run release:check`
-- `npm pack --dry-run`
+- `npm run package:smoke`
 
 ### Upgrade Notes
 
@@ -17,4 +17,4 @@
 
 ### Maintainer Notes
 
-- Confirm the dry-run package includes README, license, security, support, and runtime assets before publishing.
+- The package smoke asserts the packed file list and installs and executes the CLI from outside the checkout.
