@@ -128,9 +128,10 @@ npm run package:smoke
 npm run release:check
 ```
 
-Use `npm run package:smoke` to confirm the published package contains the runnable
-CLI/runtime files, checked-in fixtures, README, license, security, support, and
-release notes.
+Use `npm run package:smoke` to build and pack the package, assert that the artifact
+contains the runnable CLI/runtime files, checked-in fixtures, README, license,
+security, support, and release notes, then install and execute the packed CLI from
+outside the checkout.
 
 ## Safety Notes
 
