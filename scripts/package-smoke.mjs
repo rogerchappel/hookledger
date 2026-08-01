@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
 import { mkdir, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
-const projectRoot = resolve(import.meta.dirname, "..");
+const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const temporaryRoot = await mkdtemp(join(tmpdir(), "hookledger-package-smoke-"));
 const packDirectory = join(temporaryRoot, "pack");
 const installDirectory = join(temporaryRoot, "install");
@@ -28,7 +30,7 @@ function run(command, args, options = {}) {
 try {
   await mkdir(packDirectory);
   await mkdir(installDirectory);
-  const packed = run("npm", ["pack", "--json", "--pack-destination", packDirectory]);
+  const packed = run(npmCommand, ["pack", "--json", "--pack-destination", packDirectory]);
   const metadata = JSON.parse(packed.stdout);
 
   assert.equal(metadata.length, 1, "npm pack should produce exactly one package");
@@ -56,10 +58,10 @@ try {
   assert(paths.has(cliPath), `packed artifact is missing CLI target ${cliPath}`);
 
   const tarball = join(packDirectory, filename);
-  run("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", "--no-package-lock", tarball], {
+  run(npmCommand, ["install", "--ignore-scripts", "--no-audit", "--no-fund", "--no-package-lock", tarball], {
     cwd: installDirectory,
   });
-  const cli = join(installDirectory, "node_modules", ".bin", "hookledger");
+  const cli = join(installDirectory, "node_modules", ".bin", process.platform === "win32" ? "hookledger.cmd" : "hookledger");
   const executed = run(cli, ["--help"], { cwd: temporaryRoot });
   assert.match(executed.stdout, /Usage:\s+hookledger/, "installed CLI should print its help output");
 
