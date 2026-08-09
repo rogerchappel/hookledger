@@ -1,3 +1,5 @@
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { chmod, mkdtemp, mkdir, cp, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -6,6 +8,7 @@ import assert from "node:assert/strict";
 import { inventoryHooks } from "../src/inventory.js";
 
 const repoRoot = path.resolve(import.meta.dirname, "..", "..");
+const execFileAsync = promisify(execFile);
 
 test("inventories native git hooks from a repository", async () => {
   const root = await nativeGitFixture();
@@ -28,6 +31,26 @@ test("inventories shared native hooks from a linked worktree", async () => {
     ]
   );
   assert.deepEqual(ledger.hooks[0]?.commands, ["npm test"]);
+});
+
+test("inventories native hooks from a repository-relative core.hooksPath", async () => {
+  const root = await configuredHooksFixture(".custom-hooks");
+  const ledger = await inventoryHooks({ root, generatedAt: "2026-01-01T00:00:00.000Z" });
+
+  assert.deepEqual(
+    ledger.hooks.map(({ name, executable }) => ({ name, executable })),
+    [{ name: "pre-commit", executable: true }]
+  );
+  assert.deepEqual(ledger.hooks[0]?.commands, ["npm run configured-check"]);
+});
+
+test("inventories native hooks from an absolute core.hooksPath", async () => {
+  const hooksDir = await mkdtemp(path.join(os.tmpdir(), "hookledger-absolute-hooks-"));
+  const root = await configuredHooksFixture(hooksDir);
+  const ledger = await inventoryHooks({ root, generatedAt: "2026-01-01T00:00:00.000Z" });
+
+  assert.equal(ledger.hooks[0]?.name, "pre-commit");
+  assert.equal(ledger.hooks[0]?.executable, true);
 });
 
 test("inventories Husky hooks", async () => {
@@ -85,4 +108,15 @@ async function linkedWorktreeFixture(): Promise<string> {
 
 function fixture(...parts: string[]): string {
   return path.join(repoRoot, "fixtures", ...parts);
+}
+
+async function configuredHooksFixture(configuredPath: string): Promise<string> {
+  const root = await mkdtemp(path.join(os.tmpdir(), "hookledger-configured-"));
+  const hooksDir = path.isAbsolute(configuredPath) ? configuredPath : path.join(root, configuredPath);
+  await execFileAsync("git", ["init", "--quiet", root]);
+  await execFileAsync("git", ["-C", root, "config", "core.hooksPath", configuredPath]);
+  await mkdir(hooksDir, { recursive: true });
+  await writeFile(path.join(hooksDir, "pre-commit"), "#!/bin/sh\nnpm run configured-check\n", "utf8");
+  await chmod(path.join(hooksDir, "pre-commit"), 0o755);
+  return root;
 }
