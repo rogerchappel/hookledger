@@ -8,8 +8,10 @@ installing, modifying, or executing hook bodies.
 
 ## Detects
 
-- Native `.git/hooks` files, including hooks in the shared Git directory used by
-  linked worktrees, and excluding `*.sample`.
+- Native Git hook files from the effective hooks directory: configured
+  `core.hooksPath` values (repository-relative or absolute), or `.git/hooks`
+  when it is unset. Shared Git directories used by linked worktrees are
+  supported, and `*.sample` files are excluded.
 - Husky hook files in `.husky/`.
 - Lefthook `lefthook.yml` and `lefthook.yaml`.
 - pre-commit `.pre-commit-config.yaml`.
@@ -69,6 +71,14 @@ HookLedger reports informational, warning, and high-risk hints for patterns such
 as non-executable hook files, network commands, destructive local commands, and
 secret-like environment references. These hints are conservative signals for
 review; HookLedger does not block by policy unless verification detects drift.
+
+## Limitations
+
+Native hook discovery follows the effective local Git configuration available
+for `--root`. Relative `core.hooksPath` values are resolved from that repository
+root. HookLedger inventories hook files without executing them, so conditional
+behavior inside a hook is reported as source and command hints rather than
+evaluated runtime behavior.
 
 ## Fixtures
 
