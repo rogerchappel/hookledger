@@ -26,6 +26,6 @@ configuration, but it must not install, modify, delete, or execute hooks.
 
 ## Release Notes
 
-The MVP publishes source, compiled `dist`, fixtures, docs, and package metadata.
-GitHub Releases are scaffolded by StackForge, while npm/Homebrew publishing remain
-disabled until explicitly configured.
+The release workflow publishes the verified package to npm with provenance before
+creating its matching GitHub release. npm trusted publishing must be configured as
+described in `docs/release-checklist.md`; Homebrew publishing remains disabled.
