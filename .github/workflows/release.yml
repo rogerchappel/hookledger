@@ -5,16 +5,14 @@ on:
     tags:
       - 'v*.*.*'
 
-permissions:
-  contents: write
-  id-token: write
-
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   RELEASEBOX_REF: v0.1.0
 
 jobs:
-  release:
+  prepare:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -35,12 +33,40 @@ jobs:
           npm --prefix /tmp/releasebox run build
       - name: ReleaseBox readiness check
         run: node /tmp/releasebox/bin/releasebox.js check .
+      - name: Generate release notes
+        run: node /tmp/releasebox/bin/releasebox.js notes . > RELEASE_NOTES.md
       - name: Run release checks
         run: npm run release:check
       - name: Build package
         run: npm pack
-      - name: Generate release notes
-        run: node /tmp/releasebox/bin/releasebox.js notes . > RELEASE_NOTES.md
+      - name: Preserve verified release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets
+          path: |
+            *.tgz
+            RELEASE_NOTES.md
+          if-no-files-found: error
+
+  publish:
+    needs: prepare
+    permissions:
+      contents: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore verified release assets
+        uses: actions/download-artifact@v4
+        with:
+          name: release-assets
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - name: Use npm with trusted publishing support
+        run: npm install --global npm@^11.5.1
+      - name: Publish package to npm
+        run: npm publish ./*.tgz --access public --provenance
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
