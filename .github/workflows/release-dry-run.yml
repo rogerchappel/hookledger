@@ -41,6 +41,10 @@ jobs:
         run: node /tmp/releasebox/bin/releasebox.js notes . > RELEASE_NOTES.md
       - name: Run release checks
         run: npm run release:check
+      - name: Build package
+        run: npm pack
+      - name: Exercise npm publish without publishing
+        run: npm publish ./*.tgz --access public --provenance --dry-run
       - name: Release notes preview
         run: |
           cat RELEASE_NOTES.md

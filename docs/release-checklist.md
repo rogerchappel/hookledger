@@ -2,6 +2,12 @@
 
 Use this checklist before publishing hookledger.
 
+Users install the published CLI from npm with:
+
+```sh
+npm install --global hookledger
+```
+
 ## Local Verification
 
 - Run `npm install` from a clean checkout.
@@ -27,3 +33,7 @@ Confirm the package includes:
 - Release notes call out breaking changes or explicitly state that there are none.
 - Security and support docs give users a clear place to report issues.
 - CI is green on the release branch.
+- The npm package has a trusted publisher configured for GitHub Actions with
+  owner `rogerchappel`, repository `hookledger`, and workflow `release.yml`.
+  The release workflow uses npm OIDC authentication and does not require an
+  `NPM_TOKEN` repository secret.
