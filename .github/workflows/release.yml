@@ -39,7 +39,7 @@ jobs:
         run: npm run release:check
       - name: Build package
         run: npm pack
-      - name: Preserve verified release assets
+       - name: Preserve verified release assets
         uses: actions/upload-artifact@v4
         with:
           name: release-assets
@@ -65,8 +65,8 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: Use npm with trusted publishing support
         run: npm install --global npm@^11.5.1
-      - name: Publish package to npm
-        run: npm publish ./*.tgz --access public --provenance
+       - name: Publish package to npm
+         run: npm publish ./*.tgz --access public --provenance
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}

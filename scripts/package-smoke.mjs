@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { assertReleaseNotesMatch } from "../dist/src/release-notes.js";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
@@ -62,6 +63,11 @@ try {
     cwd: installDirectory,
   });
   const cli = join(installDirectory, "node_modules", ".bin", process.platform === "win32" ? "hookledger.cmd" : "hookledger");
+  const installedPackage = join(installDirectory, "node_modules", "hookledger");
+  assertReleaseNotesMatch(
+    await readFile(join(projectRoot, "RELEASE_NOTES.md")),
+    await readFile(join(installedPackage, "RELEASE_NOTES.md")),
+  );
   const executed = run(cli, ["--help"], { cwd: temporaryRoot });
   assert.match(executed.stdout, /Usage:\s+hookledger/, "installed CLI should print its help output");
 
