@@ -34,6 +34,23 @@ test("fails when a hook file changes", async () => {
   assert.match(result.changed[0]?.fields.join(","), /commands/);
 });
 
+test("rejects malformed baseline ledgers with an actionable diagnostic", async () => {
+  const root = await nativeGitFixture();
+  const baselinePath = path.join(root, "hookledger.json");
+
+  for (const [baseline, expected] of [
+    [{}, "schemaVersion must be 1"],
+    [{ schemaVersion: 1, tool: "hookledger", generatedAt: "2026-01-01T00:00:00.000Z", root: ".", summary: {} }, "hooks must be an array"],
+    [{ schemaVersion: 1, tool: "hookledger", generatedAt: "2026-01-01T00:00:00.000Z", root: ".", summary: {}, hooks: [{}] }, "hooks[0].id must be a string"]
+  ] as const) {
+    await writeFile(baselinePath, JSON.stringify(baseline), "utf8");
+    await assert.rejects(
+      verifyLedger(root, baselinePath),
+      new Error(`Invalid baseline ledger ${baselinePath}: ${expected}`)
+    );
+  }
+});
+
 test("detects drift in a hook from configured core.hooksPath", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "hookledger-verify-configured-"));
   const hooksDir = path.join(root, ".custom-hooks");

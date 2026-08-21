@@ -35,6 +35,19 @@ test("invalid verify arguments fail without producing a report", () => {
   assert.equal(result.stderr, "hookledger: --baseline requires a value\n");
 });
 
+test("malformed baseline ledgers fail without an internal error", async () => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), "hookledger-cli-malformed-"));
+  const baseline = path.join(directory, "baseline.json");
+  await writeFile(baseline, "{}\n", "utf8");
+
+  const result = run("verify", "--root", fixtureRoot, "--baseline", baseline);
+
+  assert.equal(result.status, 1);
+  assert.equal(result.stdout, "");
+  assert.equal(result.stderr, `hookledger: Invalid baseline ledger ${baseline}: schemaVersion must be 1\n`);
+  assert.doesNotMatch(result.stderr, /TypeError|stack/i);
+});
+
 test("documented inventory, verify, and help commands succeed", async () => {
   const inventory = run("inventory", "--root", fixtureRoot, "--stdout");
   assert.equal(inventory.status, 0);
