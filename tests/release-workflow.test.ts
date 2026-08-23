@@ -18,6 +18,7 @@ test("release publishes the verified tarball before creating the GitHub release"
   };
   const publish = "npm publish ./*.tgz --access public --provenance";
   const createRelease = "gh release create";
+  const versionGuard = "npm run release:version -- \"$GITHUB_REF_NAME\"";
   const prepare = document.jobs?.prepare;
   const publishJob = document.jobs?.publish;
 
@@ -37,6 +38,7 @@ test("release publishes the verified tarball before creating the GitHub release"
   ));
 
   assert.ok(workflow.indexOf("Generate release notes") < workflow.indexOf("Run release checks"));
+  assert.ok(workflow.indexOf(versionGuard) < workflow.indexOf("Build package"));
   assert.ok(workflow.indexOf("Run release checks") < workflow.indexOf("Build package"));
   assert.ok(workflow.indexOf(publish) > workflow.indexOf("actions/download-artifact@v4"));
   assert.ok(workflow.indexOf(createRelease) > workflow.indexOf(publish));
@@ -46,6 +48,11 @@ test("pull requests exercise the publish command in dry-run mode", async () => {
   const workflow = await readFile(dryRunWorkflow, "utf8");
 
   assert.match(workflow, /permissions:\n  contents: read/);
+  assert.match(
+    workflow,
+    /npm run release:version -- "v\$\(node -p "require\('\.\/package\.json'\)\.version"\)"/,
+  );
+  assert.ok(workflow.indexOf("npm run release:version") < workflow.indexOf("npm pack"));
   assert.match(
     workflow,
     /npm publish \.\/\*\.tgz --access public --provenance --dry-run/,
