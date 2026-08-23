@@ -2,6 +2,11 @@
 
 Use this checklist before publishing hookledger.
 
+Release tags must be exactly `v<version>` for the current `package.json` version
+(for example, package version `0.1.0` is released only from tag `v0.1.0`). The
+release workflow enforces this invariant before it builds or publishes a package;
+missing, malformed, and mismatched tags stop the release with an actionable error.
+
 Users install the published CLI from npm with:
 
 ```sh
