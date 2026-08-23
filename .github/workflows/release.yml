@@ -25,6 +25,8 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: Install dependencies
         run: npm ci
+      - name: Verify release tag matches package version
+        run: npm run release:version -- "$GITHUB_REF_NAME"
       - name: Install ReleaseBox
         run: |
           set -euo pipefail
