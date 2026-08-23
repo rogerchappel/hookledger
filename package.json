@@ -28,6 +28,7 @@
     "smoke": "npm run build && bash examples/smoke-native.sh",
     "test": "npm run build && node --test dist/tests/*.test.js",
     "package:smoke": "npm run build && node scripts/package-smoke.mjs",
+    "release:version": "node scripts/assert-release-version.mjs",
     "release:check": "npm run build && npm test && npm run smoke && npm run package:smoke"
   },
   "keywords": [
