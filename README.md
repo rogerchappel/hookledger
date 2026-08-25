@@ -16,7 +16,10 @@ installing, modifying, or executing hook bodies.
 - Lefthook `lefthook.yml` and `lefthook.yaml`.
 - pre-commit `.pre-commit-config.yaml`.
 - simple-git-hooks package and JSON config.
-- Package scripts that look like local hook automation.
+- Explicit hook-named package scripts such as `precommit` and `prepush`, plus
+  lifecycle scripts such as `prepare` or `install` only when their command
+  invokes Husky, Lefthook, pre-commit, or simple-git-hooks. Ordinary lifecycle
+  commands such as `prepare: tsc` are excluded.
 
 ## Install
 
