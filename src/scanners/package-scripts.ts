@@ -14,8 +14,7 @@ const HOOK_SCRIPT_NAMES = new Set([
   "prepare-commit-msg",
   "post-commit",
   "post-merge",
-  "post-checkout",
-  "prepare"
+  "post-checkout"
 ]);
 
 export async function scanPackageHookScripts(root: string): Promise<HookRecord[]> {

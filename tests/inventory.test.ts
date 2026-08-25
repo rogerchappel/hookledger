@@ -80,6 +80,11 @@ test("inventories package hook scripts", async () => {
   assert.deepEqual(names, ["precommit", "prepare", "prepush"]);
 });
 
+test("ignores ordinary prepare lifecycle scripts", async () => {
+  const ledger = await inventoryHooks({ root: fixture("package-scripts-ordinary-prepare") });
+  assert.deepEqual(ledger.hooks, []);
+});
+
 async function nativeGitFixture(): Promise<string> {
   const root = await mkdtemp(path.join(os.tmpdir(), "hookledger-native-"));
   await mkdir(path.join(root, ".git", "hooks"), { recursive: true });
