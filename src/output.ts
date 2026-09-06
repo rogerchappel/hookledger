@@ -16,6 +16,11 @@ export async function writeLedgers(
   const ledgerDir = options.ledgerDir ?? path.join(ledger.root, "docs", "hookledger");
   const jsonPath = options.jsonPath ?? path.join(ledgerDir, "hookledger.json");
   const markdownPath = options.markdownPath ?? path.join(ledgerDir, "HOOKLEDGER.md");
+  if (path.resolve(jsonPath) === path.resolve(markdownPath)) {
+    throw new Error(
+      `JSON and Markdown output paths must be different; both resolve to ${path.resolve(jsonPath)}`
+    );
+  }
   await writeText(jsonPath, renderJsonLedger(ledger));
   await writeText(markdownPath, renderMarkdownLedger(ledger));
   return { jsonPath, markdownPath };
