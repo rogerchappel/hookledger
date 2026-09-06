@@ -16,6 +16,9 @@ Usage:
 Commands:
   inventory  Detect native git hooks and common hook-manager config.
   verify     Compare current inventory against a JSON ledger.
+
+Inventory output paths:
+  --json and --markdown must resolve to different absolute paths.
 `;
 
 export async function main(argv = process.argv.slice(2)): Promise<number> {

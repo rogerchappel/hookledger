@@ -68,6 +68,10 @@ values, plus the valueless `--stdout` switch. `verify` accepts `--baseline`
 (required) and `--root`, both with values. Other options, missing values, and
 values supplied to `--stdout` are rejected.
 
+The JSON and Markdown destinations must resolve to different absolute paths.
+HookLedger rejects a collision before writing either file, so an existing
+destination is left unchanged.
+
 ## Risk Hints
 
 HookLedger reports informational, warning, and high-risk hints for patterns such
