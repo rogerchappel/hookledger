@@ -80,6 +80,27 @@ test("inventories package hook scripts", async () => {
   assert.deepEqual(names, ["precommit", "prepare", "prepush"]);
 });
 
+test("rejects a missing inventory root", async () => {
+  const parent = await mkdtemp(path.join(os.tmpdir(), "hookledger-missing-root-"));
+  const root = path.join(parent, "missing");
+
+  await assert.rejects(
+    inventoryHooks({ root }),
+    new RegExp(`Inventory root does not exist: ${escapeRegExp(root)}`)
+  );
+});
+
+test("rejects an inventory root that is not a directory", async () => {
+  const parent = await mkdtemp(path.join(os.tmpdir(), "hookledger-file-root-"));
+  const root = path.join(parent, "package.json");
+  await writeFile(root, "{}\n", "utf8");
+
+  await assert.rejects(
+    inventoryHooks({ root }),
+    new RegExp(`Inventory root is not a directory: ${escapeRegExp(root)}`)
+  );
+});
+
 test("ignores ordinary prepare lifecycle scripts", async () => {
   const ledger = await inventoryHooks({ root: fixture("package-scripts-ordinary-prepare") });
   assert.deepEqual(ledger.hooks, []);
@@ -113,6 +134,10 @@ async function linkedWorktreeFixture(): Promise<string> {
 
 function fixture(...parts: string[]): string {
   return path.join(repoRoot, "fixtures", ...parts);
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 async function configuredHooksFixture(configuredPath: string): Promise<string> {
