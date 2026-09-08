@@ -68,6 +68,10 @@ values, plus the valueless `--stdout` switch. `verify` accepts `--baseline`
 (required) and `--root`, both with values. Other options, missing values, and
 values supplied to `--stdout` are rejected.
 
+The inventory root must exist and be a readable directory. HookLedger exits
+nonzero with a path-specific diagnostic before creating ledger output files if
+the root is missing, unreadable, or a regular file.
+
 The JSON and Markdown destinations must resolve to different absolute paths.
 HookLedger rejects a collision before writing either file, so an existing
 destination is left unchanged.
