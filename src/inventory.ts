@@ -1,4 +1,6 @@
 import path from "node:path";
+import { access, stat } from "node:fs/promises";
+import { constants } from "node:fs";
 import { scanHuskyHooks } from "./scanners/husky.js";
 import { scanLefthook } from "./scanners/lefthook.js";
 import { scanNativeGitHooks } from "./scanners/native-git.js";
@@ -9,6 +11,7 @@ import type { HookLedger, HookRecord, InventoryOptions, InventorySummary } from 
 
 export async function inventoryHooks(options: InventoryOptions): Promise<HookLedger> {
   const root = path.resolve(options.root);
+  await validateInventoryRoot(root);
   const hookGroups = await Promise.all([
     scanNativeGitHooks(root),
     scanHuskyHooks(root),
@@ -26,6 +29,30 @@ export async function inventoryHooks(options: InventoryOptions): Promise<HookLed
     summary: summarizeHooks(hooks),
     hooks
   };
+}
+
+async function validateInventoryRoot(root: string): Promise<void> {
+  let rootStat;
+  try {
+    rootStat = await stat(root);
+  } catch (error: unknown) {
+    if (isNodeError(error) && error.code === "ENOENT") {
+      throw new Error(`Inventory root does not exist: ${root}`);
+    }
+    throw new Error(`Inventory root is not readable: ${root}`);
+  }
+  if (!rootStat.isDirectory()) {
+    throw new Error(`Inventory root is not a directory: ${root}`);
+  }
+  try {
+    await access(root, constants.R_OK);
+  } catch {
+    throw new Error(`Inventory root is not readable: ${root}`);
+  }
+}
+
+function isNodeError(error: unknown): error is NodeJS.ErrnoException {
+  return error instanceof Error && "code" in error;
 }
 
 export function summarizeHooks(hooks: HookRecord[]): InventorySummary {
