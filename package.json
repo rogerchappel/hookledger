@@ -45,7 +45,7 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "@types/node": "^22.20.2",
+    "@types/node": "^26.6.3",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
     "yaml": "^2.9.0"
