@@ -1,8 +1,13 @@
+# A representative nested configuration with multiple commands and metadata.
 pre-commit:
+  parallel: true
   commands:
     lint:
-      run: npm run check
+      glob: "*.{ts,tsx}"
+      run: npm run lint -- {staged_files}
+    test:
+      run: npm test
 pre-push:
   commands:
-    tests:
-      run: npm test
+    verify:
+      run: npm run check

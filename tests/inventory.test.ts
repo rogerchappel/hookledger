@@ -59,14 +59,22 @@ test("inventories Husky hooks", async () => {
   assert.match(ledger.hooks.map((hook) => hook.name).join(","), /pre-commit/);
 });
 
-test("inventories Lefthook command config", async () => {
+test("inventories nested Lefthook commands and ignores unrelated YAML fields", async () => {
   const ledger = await inventoryHooks({ root: fixture("lefthook") });
-  assert.deepEqual(ledger.hooks.map((hook) => hook.name), ["pre-commit", "pre-push"]);
+  const hooks = ledger.hooks.filter((hook) => hook.manager === "lefthook");
+  assert.deepEqual(hooks.map(({ name, commands }) => ({ name, commands })), [
+    { name: "pre-commit", commands: ["npm run lint -- {staged_files}", "npm test"] },
+    { name: "pre-push", commands: ["npm run check"] }
+  ]);
 });
 
-test("inventories pre-commit config", async () => {
+test("inventories pre-commit hooks with metadata and ignores repository fields", async () => {
   const ledger = await inventoryHooks({ root: fixture("pre-commit") });
-  assert.deepEqual(ledger.hooks.map((hook) => hook.name), ["lint", "unit-tests"]);
+  const hooks = ledger.hooks.filter((hook) => hook.manager === "pre-commit");
+  assert.deepEqual(hooks.map(({ name, commands }) => ({ name, commands })), [
+    { name: "lint", commands: ["npm run lint"] },
+    { name: "unit-tests", commands: ["npm test"] }
+  ]);
 });
 
 test("inventories simple-git-hooks config", async () => {
