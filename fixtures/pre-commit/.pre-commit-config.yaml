@@ -1,11 +1,15 @@
 repos:
-  - repo: local
+  - repo: https://example.invalid/hooks
+    rev: v1.2.3
     hooks:
+      - id: lint
+        name: lint sources
+        entry: npm run lint
+        language: system
+        files: '\.(ts|tsx)$'
+        stages: [pre-commit]
       - id: unit-tests
         name: unit tests
         entry: npm test
         language: system
-      - id: lint
-        name: lint
-        entry: npm run check
-        language: system
+        pass_filenames: false
