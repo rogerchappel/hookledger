@@ -33,6 +33,31 @@ test("inventories shared native hooks from a linked worktree", async () => {
   assert.deepEqual(ledger.hooks[0]?.commands, ["npm test"]);
 });
 
+test("inventories hooks from a worktree-local core.hooksPath", async () => {
+  const fixtureRoot = await mkdtemp(path.join(os.tmpdir(), "hookledger-worktree-config-"));
+  const main = path.join(fixtureRoot, "main");
+  const root = path.join(fixtureRoot, "linked");
+  await mkdir(main, { recursive: true });
+  await execFileAsync("git", ["init", "--quiet", main]);
+  await execFileAsync("git", ["-C", main, "config", "user.name", "Fixture"]);
+  await execFileAsync("git", ["-C", main, "config", "user.email", "fixture@example.com"]);
+  await writeFile(path.join(main, "README.md"), "fixture\n", "utf8");
+  await execFileAsync("git", ["-C", main, "add", "README.md"]);
+  await execFileAsync("git", ["-C", main, "commit", "--quiet", "-m", "fixture"]);
+  await execFileAsync("git", ["-C", main, "config", "extensions.worktreeConfig", "true"]);
+  await execFileAsync("git", ["-C", main, "worktree", "add", "--quiet", "-b", "linked", root]);
+  const customHooks = path.join(root, "worktree-hooks");
+  await mkdir(customHooks, { recursive: true });
+  await writeFile(path.join(customHooks, "pre-commit"), "#!/bin/sh\nnpm run worktree-check\n", "utf8");
+  await chmod(path.join(customHooks, "pre-commit"), 0o755);
+  await execFileAsync("git", ["-C", root, "config", "--worktree", "core.hooksPath", customHooks]);
+
+  const ledger = await inventoryHooks({ root, generatedAt: "2026-01-01T00:00:00.000Z" });
+  assert.deepEqual(ledger.hooks.map(({ name }) => name), ["pre-commit"]);
+  assert.equal(ledger.hooks[0]?.executable, true);
+  assert.match(ledger.hooks[0]?.path ?? "", /worktree-hooks/);
+});
+
 test("inventories native hooks from a repository-relative core.hooksPath", async () => {
   const root = await configuredHooksFixture(".custom-hooks");
   const ledger = await inventoryHooks({ root, generatedAt: "2026-01-01T00:00:00.000Z" });

@@ -50,6 +50,17 @@ async function readConfiguredHooksPath(root: string): Promise<string | null> {
   try {
     const { stdout } = await execFileAsync(
       "git",
+      ["-C", root, "config", "--worktree", "--path", "--get", "core.hooksPath"],
+      { encoding: "utf8" }
+    );
+    return stdout.trim() || null;
+  } catch {
+    // Older repositories may not enable worktree config; check shared config next.
+  }
+
+  try {
+    const { stdout } = await execFileAsync(
+      "git",
       ["-C", root, "config", "--path", "--get", "core.hooksPath"],
       { encoding: "utf8" }
     );
