@@ -6,9 +6,18 @@ import path from "node:path";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { inventoryHooks } from "../src/inventory.js";
+import { scanNativeGitHooks } from "../src/scanners/native-git.js";
 
 const repoRoot = path.resolve(import.meta.dirname, "..", "..");
 const execFileAsync = promisify(execFile);
+
+test("inventories native hooks in checked-in Windows path fixtures independent of host parsing", async () => {
+  const records = await scanNativeGitHooks(fixture("windows-paths"));
+  assert.deepEqual(records.map(({ name, path: hookPath }) => ({ name, path: hookPath })), [
+    { name: "commit-msg", path: ".git/hooks/commit-msg" },
+    { name: "pre-commit", path: ".git/hooks/pre-commit" }
+  ]);
+});
 
 test("inventories native git hooks from a repository", async () => {
   const root = await nativeGitFixture();
